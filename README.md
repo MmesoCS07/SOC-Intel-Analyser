@@ -1,19 +1,17 @@
-# 🛡️ VT IOC Triage
-
 A lightweight command-line tool for SOC analysts to enrich and triage Indicators of Compromise (IPs, domains, URLs and file hashes) using the **VirusTotal API v3**.
 
 Paste in a list of IOCs from an alert, phishing report or threat feed and get a clear verdict, detection ratio, context and a pivot link for each one, ready to drop into a ticket.
 
 ## Features
 
-- **Auto-detects IOC type**: IPv4/IPv6, domain, URL, MD5/SHA-1/SHA-256
-- **Handles defanged IOCs**: `hxxps://evil[.]com` works as-is
-- **Verdicts**: `MALICIOUS`, `SUSPICIOUS`, `CLEAN`, `NO DATA`, `NOT FOUND`
-- **Rate-limit aware**: defaults to the free-tier limit (4 requests/min), with automatic back-off on HTTP 429
-- **Skips private IPs** (RFC1918, loopback, link-local) so you don't waste quota
-- **Exports** to CSV and JSON for case notes or SIEM/SOAR ingestion
-- **Pipeline friendly**: exit code `2` when any IOC is malicious
-- Deduplicates input and ignores `#` comments in IOC files
+**Auto-detects IOC type**: IPv4/IPv6, domain, URL, MD5/SHA-1/SHA-256
+**Handles defanged IOCs**: `hxxps://evil[.]com` works as-is
+**Verdicts**: `MALICIOUS`, `SUSPICIOUS`, `CLEAN`, `NO DATA`, `NOT FOUND`
+**Rate-limit aware**: defaults to the free-tier limit (4 requests/min), with automatic back-off on HTTP 429
+**Skips private IPs** (RFC1918, loopback, link-local) so you don't waste quota
+**Exports** to CSV and JSON for case notes or SIEM/SOAR ingestion
+**Pipeline friendly**: exit code `2` when any IOC is malicious
+Deduplicates input and ignores `#` comments in IOC files
 
 ## Requirements
 
@@ -41,7 +39,6 @@ export VT_API_KEY='your_api_key_here'
 $env:VT_API_KEY = 'your_api_key_here'
 ```
 
-> ⚠️ Never hard-code or commit your API key. `.env` is already in `.gitignore`.
 
 ## Usage
 
@@ -102,20 +99,3 @@ SUSPICIOUS_THRESHOLD = 1   # >=1 malicious (or >=3 suspicious) -> SUSPICIOUS
 
 Adjust them to match your organisation's risk appetite and false-positive tolerance.
 
-## Analyst notes & limitations
-
-- A `CLEAN` verdict means **no engine flagged it right now**, not that it is safe. Always combine with internal telemetry, sandboxing and other intel sources.
-- `NOT FOUND` means the IOC has never been seen by VirusTotal. That can itself be interesting for targeted threats.
-- **Privacy:** querying VirusTotal sends the IOC to a third party. Do not submit confidential internal hostnames, URLs containing tokens/PII, or files hashes from sensitive documents without checking your policy. This tool only looks up existing reports; it never uploads files.
-- Free API keys are for non-commercial use and limited to 4 requests/min and 500/day. Check VirusTotal's terms for your use case.
-
-## Ideas for extension
-
-- Add AbuseIPDB / URLhaus / AlienVault OTX lookups for a second opinion
-- Push results to a SIEM (Splunk HEC, Elastic) or ticketing system
-- Add on-disk caching to save quota on repeat IOCs
-- Wrap it in a Slack/Teams bot for ad-hoc analyst lookups
-
-## License
-
-MIT. Use it, improve it, share it.
